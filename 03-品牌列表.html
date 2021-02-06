@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/css/bootstrap.min.css"
+        crossorigin="anonymous">
+</head>
+
+<body>
+    <div id="app">
+
+
+        <div class="panel panel-primary">
+            <div class="panel-heading">
+                <h3 class="panel-title">添加品牌</h3>
+            </div>
+            <div class="panel-body form-inline">
+                <label>
+                    Id:
+                    <input type="text" class="form-control" v-model="id">
+                </label>
+                <label>
+                    Name:
+                    <input type="text" class="form-control" v-model="name" @keyup.enter="add">
+                </label>
+                <input type="button" value="添加" class="btn btn-primary" @click="add">
+                <label>
+                    搜索名称关键字:
+                    <input type="text" class="form-control" v-model="keyword" id="search" v-focus v-color="'blue'">
+                </label>
+            </div>
+        </div>
+
+
+        <table class="table table-striped table-bordered table-hover">
+            <thead>
+                <tr>
+                    <th>Id</th>
+                    <th>Name</th>
+                    <th>Ctime</th>
+                    <th>Operation</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- 之前 v-for 中的数据是从 data 上的 list 中直接渲染过来的 -->
+                <!-- 现在定义了一个 search 方法，把所有关键字通过传参的形式传递 -->
+                <!-- 就是先过滤一遍，把符合要求的渲染出来 -->
+                <tr v-for="(item,index) in search(keyword)" :key="item.id">
+                    <td>{{item.id}}</td>
+                    <td>{{item.name}}</td>
+                    <td>{{item.ctime | dataFormt()}}</td>
+                    <td>
+                        <!-- 阻止页面默认刷新行为 -->
+                        <a href="" @click.prevent="del(index)">删除</a>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <script src="./vue.js"></script>
+    <script>
+
+        // js 方法
+        // document.getElementById('search').focus()
+
+        // 注册一个自定义全局指令 v-focus
+        // 要写到实例对象前面，不然会报错
+        Vue.directive('focus', {
+            bind(el) {
+
+            },
+            inserted: function (el) {
+                el.focus()
+            },
+            updated(el) {
+
+            }
+        })
+
+        // 自定义一个设置字体颜色的指令
+        Vue.directive('color', {
+            bind(el, binding) {
+                el.style.color = binding.value
+            }
+        })
+
+        const app = new Vue({
+            el: '#app',
+            data: {
+                id: '',
+                name: '',
+                keyword: '',
+                list: [
+                    { id: 1, name: '奔驰', ctime: new Date() },
+                    { id: 2, name: '宝马', ctime: new Date() }
+                ]
+            },
+            methods: {
+                add() {
+                    let car = { id: this.id, name: this.name, ctime: new Date() }
+                    // 输入内容不能为空
+                    if (this.id != '' && this.name != '') {
+                        this.list.push(car)
+                        // 添加完毕清除表单中输入的内容
+                        this.id = this.name = ''
+                    }
+                    console.log(this.list);
+                },
+                // 根据 id 找到要删除对象的索引
+                del(index) {
+                    this.list.splice(index, 1)
+                },
+                search(keyword) {
+
+                    // 方法一
+                    // 先遍历原数据
+                    // let newList = []
+                    // this.list.forEach(item => {
+                    //     if (item.name.indexOf(keyword) != -1) {
+                    //         newList.push(item)
+                    //     }
+                    // })
+                    // return newList
+
+                    // 方法二 高阶函数
+                    // filters 自动把返回的 item 加到数组中
+                    return this.list.filter(item => {
+                        // includes 表示数组是否包含给定的值，返回布尔值
+                        if (item.name.includes(keyword)) {
+                            return item
+                        }
+                    })
+                },
+
+            },
+            filters: {
+                // 格式化时间过滤器
+                dataFormt(datastr) {
+                    let dt = new Date(datastr)
+                    let y = dt.getFullYear()
+                    let m = dt.getMonth() + 1
+                    let d = dt.getDate()
+                    let h = dt.getHours()
+                    let mi = dt.getMinutes()
+                    let s = dt.getSeconds()
+                    // return y + '-' + m + '-' + d
+                    // 模板字符串
+                    return `${y}-${m}-${d} ${h}:${mi}:${s}`
+                }
+            }
+        })
+
+
+    </script>
+</body>
+
+</html>

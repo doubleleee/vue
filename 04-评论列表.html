@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="./vue.js"></script>
+</head>
+
+<body>
+    <div id="app">
+
+        <!-- 评论框 -->
+        <cmt-box @addnew="addCmt"></cmt-box>
+
+        <!-- 发表区 -->
+        <ul>
+            <cmt-item v-for="(item,i) in list" :item="item" :key="i"></cmt-item>
+        </ul>
+    </div>
+
+    <script>
+        // 父传子
+        const cmtItem = {
+            template: `<li>
+             <h4>评论人：{{item.name}}</h4>
+             <h5>评论内容：{{item.content}}</h5>
+             </li>`,
+            props: ['item']
+        }
+
+        // 子传父
+        const cmtBox = {
+            template: `
+            <div>
+                <label>评论人：</label><br>
+                <input type="text" v-model="name"><br>
+                <label>评论内容：</label><br>
+                <textarea v-model="content"></textarea><br>
+                <input type="button" value="发表评论" @click="add">
+            </div>
+            `,
+            data() {
+                return {
+                    name: '',
+                    content: ''
+                }
+            },
+            methods: {
+                add() {
+                    const cmt = { name: this.name, content: this.content }
+                    // 不能使用驼峰命名法
+                    this.$emit('addnew', cmt)
+                    this.name = this.content = ''
+                }
+            }
+        }
+
+        const app = new Vue({
+            el: '#app',
+            data: {
+                list: [
+                    { name: 'dabao', content: '岂可修' },
+                    { name: 'yingying', content: '哈哈哈哈哈哈哈' },
+                    { name: 'fanfan', content: '好家伙' }
+                ]
+            },
+            methods: {
+                addCmt(cmt) {
+                    if (cmt.name != '' && cmt.content != '') {
+                        this.list.push(cmt)
+                    }
+                }
+            },
+            components: {
+                cmtItem,
+                cmtBox
+            }
+        })
+    </script>
+</body>
+
+</html>
