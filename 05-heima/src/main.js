@@ -1,13 +1,11 @@
 import Vue from 'vue'
 import App from './App.vue'
-// 全局安装 mint-ui
-import MintUI from 'mint-ui'
-import 'mint-ui/lib/style.css'
-Vue.use(MintUI)
+import router from './router'
 
 Vue.config.productionTip = false
 
 new Vue({
   el: '#app',
+  router,
   render: h => h(App),
 })
