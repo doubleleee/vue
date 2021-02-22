@@ -1,7 +1,9 @@
 <template>
   <div id="app">
     <vue-header></vue-header>
+
     <router-view></router-view>
+
     <tab-bar>
       <tab-bar-item path="/home" activeColor="#0190ff">
         <img src="./assets/img/tabbar/home.png" slot="icon" />

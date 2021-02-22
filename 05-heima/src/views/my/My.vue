@@ -12,4 +12,7 @@ export default {
 </script>
 
 <style scoped>
+h2 {
+  padding-top: 50px;
+}
 </style>
