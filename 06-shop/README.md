@@ -1,4 +1,4 @@
-# 06-blacknote
+# 06-shop
 
 ## Project setup
 ```
