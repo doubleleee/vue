@@ -3,7 +3,7 @@
     <div class="login_box">
       <!-- 头像区域 -->
       <div class="avatar_box">
-        <img src="../assets/img/logo.png" alt="" />
+        <img src="../assets/img/user.jpeg" alt="" />
       </div>
 
       <!-- 登录表单区 -->
@@ -47,8 +47,8 @@ export default {
     return {
       // 登录表单的数据绑定对象
       loginForm: {
-        username: "admin",
-        password: "123456",
+        username: "111111",
+        password: "111111",
       },
 
       // 登录表单的验证规则对象
@@ -89,14 +89,27 @@ export default {
       this.$refs.loginFormRef.validate((valid) => {
         if (!valid) return;
         // fixme  请求类型 post/get  day1 22
-        const result = this.$http.post("login", this.loginForm);
-        if (result.meta.status != 200) return this.$message.error("登录失败");
-        this.$message.success("登录成功");
+
+        const result = this.$http.post("/api/admin/login", this.loginForm);
+        debugger;
+        console.log(result);
+
+        if (result.code == 200) {
+          return this.$msg.success("登录成功");
+          //登录成功之后，跳转主页面
+        } else if (result.code == 400) {
+          //这个提示信息后台可以给，比如这个 用户名或者密码输入错误!
+          //或者这个 用户名和密码不能为空 result.msg
+
+          return this.$msg.error("登录失败");
+        }
 
         // 1、将登录成功后的 token 保存到客户端的 sessionStorage 中
         // 1.1 项目中除了登录之外的 API 接口，必须在登录之后才能够访问
         // 1.2 token 只应在当前网站打开期间生效，所以将 token 保存在 sessionStorage 中
-        window.sessionStorage.setItem("token", result.data.token);
+        //token中保存的是当前登录用户的用户信息
+        window.sessionStorage.setItem("token", result.data);
+
         // 2、通过编程式导航跳转到后台主页，路由地址为 /home
         this.$router.push("/home");
       });
